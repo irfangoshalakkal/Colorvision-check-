@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#ffffff" />
+  <title>ColorVision Check</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+</head>
+<body class="bg-gray-100 text-gray-800">
+  <div class="max-w-xl mx-auto py-10 px-4">
+    <div id="app"></div>
+  </div>
+
+  <script>
+    const plates = [
+  { src: "Ishihara_001.jpg", answer: "12" },
+  { src: "Ishihara_002.jpg", answer: "74" },
+  { src: "Ishihara_003.jpg", answer: "6" },
+  { src: "Ishihara_004.jpg", answer: "16" },
+  { src: "Ishihara_005.jpg", answer: "2" },
+  { src: "Ishihara_006.jpg", answer: "29" },
+];
+
+    let current = 0;
+    let score = 0;
+    const answers = [];
+
+    const app = document.getElementById('app');
+
+    function showStart() {
+      app.innerHTML = `
+        <div class="text-center">
+          <h1 class="text-2xl font-bold mb-4">ColorVision Check by Irfan G</h1>
+          <p class="mb-6">This quick test checks for color blindness using the Ishihara method.</p>
+          <button class="bg-blue-500 text-white px-6 py-2 rounded" onclick="startTest()">Start Test</button>
+        </div>
+      `;
+    }
+
+    function startTest() {
+      current = 0;
+      score = 0;
+      answers.length = 0;
+      showPlate();
+    }
+
+    function showPlate() {
+      if (current >= plates.length) {
+        showResults();
+        return;
+      }
+      const plate = plates[current];
+      app.innerHTML = `
+        <div class="text-center">
+          <img src="${plate.src}" alt="Ishihara Plate" class="mx-auto mb-4 max-h-60">
+          <p class="mb-2">What number do you see?</p>
+          <input id="userInput" class="border rounded px-4 py-2 mb-4 w-1/2" type="text" placeholder="Enter number or 'x' if unclear">
+          <br>
+          <button class="bg-green-500 text-white px-6 py-2 rounded" onclick="submitAnswer()">Submit</button>
+        </div>
+      `;
+    }
+
+    function submitAnswer() {
+      const input = document.getElementById('userInput').value.trim();
+      const correct = plates[current].answer;
+      answers.push({
+        question: plates[current].src,
+        answer: input,
+        correct: correct,
+        isCorrect: input === correct
+      });
+      if (input === correct) score++;
+      current++;
+      showPlate();
+    }
+
+    function showResults() {
+      let result = score >= plates.length - 1 ? 'Normal color vision' : 'Possible color vision deficiency';
+      app.innerHTML = `
+        <div class="text-center">
+          <h2 class="text-xl font-bold mb-4">Your Result</h2>
+          <p class="mb-2">You answered <strong>${score}</strong> out of <strong>${plates.length}</strong> correctly.</p>
+          <p class="mb-4 font-semibold">${result}</p>
+          <button class="bg-blue-500 text-white px-6 py-2 rounded" onclick="showStart()">Take Again</button>
+        </div>
+      `;
+    }
+
+    showStart();
+  </script>
+</body>
+</html>
